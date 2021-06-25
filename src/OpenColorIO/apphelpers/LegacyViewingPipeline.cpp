@@ -344,16 +344,19 @@ ConstProcessorRcPtr LegacyViewingPipelineImpl::getProcessor(const ConstConfigRcP
         const char * outCS = skipColorSpaceConversions ? inCS :
                              LookTransform::GetLooksResultColorSpace(configIn, context,
                                                                      looks.c_str());
-        auto lt = LookTransform::Create();
-        lt->setSrc(inCS);
-        lt->setDst(outCS);
-        lt->setLooks(looks.c_str());
-        lt->setSkipColorSpaceConversion(skipColorSpaceConversions);
+        if (outCS && *outCS)
+        {
+            auto lt = LookTransform::Create();
+            lt->setSrc(inCS);
+            lt->setDst(outCS);
+            lt->setLooks(looks.c_str());
+            lt->setSkipColorSpaceConversion(skipColorSpaceConversions);
 
-        group->appendTransform(lt);
+            group->appendTransform(lt);
 
-        // Adjust display transform input color space.
-        dt->setSrc(outCS);
+            // Adjust display transform input color space.
+            dt->setSrc(outCS);
+        }
     }
 
     if (m_channelView)
